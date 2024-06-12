@@ -6,6 +6,7 @@ const preciosProductos = {
 };
 
 let historialCompras = [];
+let cantidadPedidos = 0;
 
 function seleccionarProducto() {
     const mensajeInicial = "Selecciona el modelo del producto: \n" +
@@ -16,12 +17,23 @@ function seleccionarProducto() {
 
     let seleccion = parseInt(prompt(mensajeInicial));
 
-    if (seleccion < 1 || seleccion > Object.keys(preciosProductos).length) {
+    if (seleccion < 1 || seleccion > 4) {
         alert("Debe seleccionar un número válido.");
         return seleccionarProducto();
     }
 
-    return Object.keys(preciosProductos)[seleccion - 1];
+    switch (seleccion) {
+        case 1:
+            return "S21";
+        case 2:
+            return "S22";
+        case 3:
+            return "S23";
+        case 4:
+            return "S24";
+        default:
+            return null;
+    }
 }
 
 function calcularCuotas(producto, precio) {
@@ -44,7 +56,6 @@ function calcularCuotas(producto, precio) {
 }
 
 let continuar = true;
-let cantidadPedidos = 0;
 
 while (continuar) {
     let producto = seleccionarProducto();
