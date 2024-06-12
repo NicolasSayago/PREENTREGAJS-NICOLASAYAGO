@@ -1,73 +1,98 @@
-let continuar = true;
+const preciosProductos = {
+    "S21": 700,
+    "S22": 900,
+    "S23": 1200,
+    "S24": 1500
+};
 
-const mensajeInicial = "Selecciona el modelo del producto: \n" +
-                    "1) S21 \n" +
-                    "2) S22 \n" +
-                    "3) S23 \n" +
-                    "4) S24 \n";
+let historialCompras = [];
 
 function seleccionarProducto() {
+    const mensajeInicial = "Selecciona el modelo del producto: \n" +
+                            "1) S21 \n" +
+                            "2) S22 \n" +
+                            "3) S23 \n" +
+                            "4) S24 \n";
+
     let seleccion = parseInt(prompt(mensajeInicial));
-    
-    if (seleccion !== 1 && seleccion !== 2 && seleccion !== 3 && seleccion !== 4) {
-        alert("TIENE QUE ESTAR DENTRO DEL 1 AL 4");
+
+    if (seleccion < 1 || seleccion > Object.keys(preciosProductos).length) {
+        alert("Debe seleccionar un número válido.");
         return seleccionarProducto();
     }
-    
-    switch (seleccion) {
-        case 1:
-            alert("El precio del modelo S21 es de $700.");
-            break;
-        case 2:
-            alert("El precio del modelo S22 es de $900.");
-            break;
-        case 3:
-            alert("El precio del modelo S23 es de $1200.");
-            break;
-        case 4:
-            alert("El precio del modelo S24 es de $1500.");
-            break;
-    }
-    
-    return seleccion;
+
+    return Object.keys(preciosProductos)[seleccion - 1];
 }
 
-function calcularCuotas(precio) {
+function calcularCuotas(producto, precio) {
     let enCuotas = confirm("¿Deseas el producto en cuotas?");
+    let cuotas = 1;
+    let pagoMensual = precio;
 
     if (enCuotas) {
-        let cuotas = parseInt(prompt("¿En cuántas cuotas deseas pagar? (del 1 al 12)"));
-        
+        cuotas = parseInt(prompt("¿En cuántas cuotas deseas pagar? (del 1 al 12)"));
+
         if (!isNaN(cuotas) && cuotas >= 1 && cuotas <= 12) {
-            let pagoMensual = precio / cuotas;
+            pagoMensual = precio / cuotas;
             alert("El costo mensual en " + cuotas + " cuotas es de $ " + pagoMensual.toFixed(2));
         } else {
-            alert("TIENE QUE SER DEL 1 AL 12");
+            alert("Número de cuotas no válido. Se calculará el precio total.");
         }
-    } else {
-        alert("El costo total del producto es de $ " + precio.toFixed(2));
+    }
+
+    historialCompras.push({ producto: producto, precioTotal: precio, cuotas: cuotas, pagoMensual: pagoMensual });
+}
+
+let continuar = true;
+let cantidadPedidos = 0;
+
+while (continuar) {
+    let producto = seleccionarProducto();
+    let precio = preciosProductos[producto];
+    alert(`El precio del modelo ${producto} es de $${precio}.`);
+    calcularCuotas(producto, precio);
+    cantidadPedidos++;
+
+    continuar = confirm("¿Deseas cotizar otro producto?");
+}
+
+if (!continuar) {
+    let revisarHistorial = confirm(`¿Quieres revisar el historial de ${cantidadPedidos} pedidos realizados?`);
+
+    if (revisarHistorial) {
+        let pedidoDeseado = parseInt(prompt(`Han sido hechos ${cantidadPedidos} pedidos. Ingresa el número de pedido que deseas revisar (del 1 al ${cantidadPedidos}):`));
+
+        if (pedidoDeseado >= 1 && pedidoDeseado <= cantidadPedidos) {
+            let pedido = historialCompras[pedidoDeseado - 1];
+            alert(`Detalles del pedido ${pedidoDeseado}:
+            - Producto: ${pedido.producto}
+            - Precio: $${pedido.precioTotal}
+            - Cuotas: ${pedido.cuotas}
+            - Pago Mensual: $${pedido.pagoMensual.toFixed(2)}`);
+            
+            let hacerOtraConsulta = confirm("¿Deseas hacer otra consulta?");
+            
+            while (hacerOtraConsulta) {
+                pedidoDeseado = parseInt(prompt(`Ingresa otro número de pedido que deseas revisar (del 1 al ${cantidadPedidos}):`));
+                
+                if (pedidoDeseado >= 1 && pedidoDeseado <= cantidadPedidos) {
+                    pedido = historialCompras[pedidoDeseado - 1];
+                    alert(`Detalles del pedido ${pedidoDeseado}:
+                    - Producto: ${pedido.producto}
+                    - Precio: $${pedido.precioTotal}
+                    - Cuotas: ${pedido.cuotas}
+                    - Pago Mensual: $${pedido.pagoMensual.toFixed(2)}`);
+                    
+                    hacerOtraConsulta = confirm("¿Deseas hacer otra consulta?");
+                } else {
+                    alert("Número de pedido inválido.");
+                }
+            }
+        } else {
+            alert("Número de pedido inválido.");
+        }
     }
 }
 
-while (continuar) {
-    let seleccion = seleccionarProducto();
-    let precio = 0;
-    
-    switch (seleccion) {
-        case 1:
-            precio = 700;
-            break;
-        case 2:
-            precio = 900;
-            break;
-        case 3:
-            precio = 1200;
-            break;
-        case 4:
-            precio = 1500;
-            break;
-    }
-    
-    calcularCuotas(precio);
-    continuar = confirm("¿Deseas cotizar otro producto?");
-}
+console.log("Historial de Compras:");
+console.log(historialCompras);
