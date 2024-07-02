@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,54 +15,67 @@
         <a href="#">Catálogo</a>
     </nav>
     <div class="seleccionar">
-        <h2>1. Elige tu celular Samsung:</h2>
+        <h2>Elige tu celular Samsung:</h2>
         <ul class="caja">
             <li>
-                <img src="https://jumboargentina.vtexassets.com/arquivos/ids/622905/Celular-Samsung-Galaxy-S21-Rosa-Sm-g991bzilar-3-858608.jpg?v=637486656169770000" alt="S21" srcset="">
-                <input type="radio" id="s21" name="celular" value="S21">
-                <label for="s21">S21 = $700</label>
+                <img src="https://jumboargentina.vtexassets.com/arquivos/ids/622905/Celular-Samsung-Galaxy-S21-Rosa-Sm-g991bzilar-3-858608.jpg?v=637486656169770000" alt="S21">
+                <button onclick="agregarProducto('S21')">Añadir producto</button>
             </li>
             <li>
-                <img src="https://tienda.personal.com.ar/images/720/webp/Galaxy_S22_negro_dorso_min_f0c2d9f36b.png" alt="S22" srcset="">
-                <input type="radio" id="s22" name="celular" value="S22">
-                <label for="s22">S22 = $900</label>
+                <img src="https://tienda.personal.com.ar/images/720/webp/Galaxy_S22_negro_dorso_min_f0c2d9f36b.png" alt="S22">
+                <button onclick="agregarProducto('S22')">Añadir producto</button>
             </li>
             <li>
-                <img src="https://samsungar.vtexassets.com/arquivos/ids/191529/Samsung-116656628-ar-galaxy-s23-s911-446628-sm-s911bzemaro-535075054--Download-Source-.png?v=638290080825930000" alt="S23" srcset="">
-                <input type="radio" id="s23" name="celular" value="S23">
-                <label for="s23">S23 = $1200</label>
+                <img src="https://samsungar.vtexassets.com/arquivos/ids/191529/Samsung-116656628-ar-galaxy-s23-s911-446628-sm-s911bzemaro-535075054--Download-Source-.png?v=638290080825930000" alt="S23">
+                <button onclick="agregarProducto('S23')">Añadir producto</button>
             </li>
             <li>
-                <img src="https://www.cordobadigital.net/wp-content/uploads/2024/02/S24-Yellow.webp" alt="S24" srcset="">
-                <input type="radio" id="s24" name="celular" value="S24">
-                <label for="s24">S24 = $1500</label>
+                <img src="https://www.cordobadigital.net/wp-content/uploads/2024/02/S24-Yellow.webp" alt="S24">
+                <button onclick="agregarProducto('S24')">Añadir producto</button>
             </li>
         </ul>
 
-        <h2>2. Elige Cuota:</h2>
-        <select name="cuotas">
-            <option value="1">1 cuota</option>
-            <option value="2">2 cuotas</option>
-            <option value="3">3 cuotas</option>
-            <option value="4">4 cuotas</option>
-            <option value="5">5 cuotas</option>
-            <option value="6">6 cuotas</option>
-            <option value="7">7 cuotas</option>
-            <option value="8">8 cuotas</option>
-            <option value="9">9 cuotas</option>
-            <option value="10">10 cuotas</option>
-            <option value="11">11 cuotas</option>
-            <option value="12">12 cuotas</option>
-        </select>
-
-        <button type="submit">Enviar</button>
-
-        
+        <h2>Mi carrito de compras</h2>
+        <table id="carritoTabla" class="carrito-tabla">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="carrito"></tbody>
+        </table>
+        <button onclick="vaciarCarrito()">Vaciar carrito</button>
+        <button onclick="mostrarCuadroCuotas()">Comprar</button>
     </div>
     <footer>
         <p>Tienda de celulares Samsung hecha por Nicolás Sayago</p>
     </footer>
 
-    <script src="./js/main.js"></script>
+
+    <div id="cuadroCuotas" class="cuadro-cuotas">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarCuadroCuotas()">&times;</span>
+            <h2>Selecciona la cantidad de cuotas</h2>
+            <select id="cuotas">
+                <option value="1">1 cuota</option>
+                <option value="2">2 cuotas</option>
+                <option value="3">3 cuotas</option>
+                <option value="4">4 cuotas</option>
+                <option value="5">5 cuotas</option>
+                <option value="6">6 cuotas</option>
+                <option value="7">7 cuotas</option>
+                <option value="8">8 cuotas</option>
+                <option value="9">9 cuotas</option>
+                <option value="10">10 cuotas</option>
+                <option value="11">11 cuotas</option>
+                <option value="12">12 cuotas</option>
+            </select>
+            <button onclick="procesarCompra()">Procesar compra</button>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
 </body>
 </html>

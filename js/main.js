@@ -5,105 +5,76 @@ const preciosProductos = {
     "S24": 1500
 };
 
-let historialCompras = [];
-let cantidadPedidos = 0;
+let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
-function seleccionarProducto() {
-    const mensajeInicial = "Selecciona el modelo del producto: \n" +
-                            "1) S21 \n" +
-                            "2) S22 \n" +
-                            "3) S23 \n" +
-                            "4) S24 \n";
-
-    let seleccion = parseInt(prompt(mensajeInicial));
-
-    if (seleccion < 1 || seleccion > 4) {
-        alert("Debe seleccionar un número válido.");
-        return seleccionarProducto();
-    }
-
-    switch (seleccion) {
-        case 1:
-            return "S21";
-        case 2:
-            return "S22";
-        case 3:
-            return "S23";
-        case 4:
-            return "S24";
-        default:
-            return null;
-    }
+function agregarProducto(producto) {
+    const precio = preciosProductos[producto];
+    carrito.push({ producto, precio });
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarCarrito();
 }
 
-function calcularCuotas(producto, precio) {
-    let enCuotas = confirm("¿Deseas el producto en cuotas?");
-    let cuotas = 1;
-    let pagoMensual = precio;
+function actualizarCarrito() {
+    const carritoElement = document.getElementById('carrito');
+    carritoElement.innerHTML = '';
+    carrito.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        
+        const tdProducto = document.createElement('td');
+        tdProducto.textContent = item.producto;
+        tr.appendChild(tdProducto);
 
-    if (enCuotas) {
-        cuotas = parseInt(prompt("¿En cuántas cuotas deseas pagar? (del 1 al 12)"));
+        const tdPrecio = document.createElement('td');
+        tdPrecio.textContent = `$${item.precio}`;
+        tr.appendChild(tdPrecio);
 
-        if (!isNaN(cuotas) && cuotas >= 1 && cuotas <= 12) {
-            pagoMensual = precio / cuotas;
-            alert("El costo mensual en " + cuotas + " cuotas es de $ " + pagoMensual.toFixed(2));
-        } else {
-            alert("Número de cuotas no válido. Se calculará el precio total.");
-        }
+        const tdAccion = document.createElement('td');
+        const eliminarBtn = document.createElement('button');
+        eliminarBtn.textContent = 'Eliminar';
+        eliminarBtn.onclick = () => eliminarProducto(index);
+        tdAccion.appendChild(eliminarBtn);
+        tr.appendChild(tdAccion);
+
+        carritoElement.appendChild(tr);
+    });
+}
+
+function eliminarProducto(index) {
+    carrito.splice(index, 1);
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarCarrito();
+}
+
+function vaciarCarrito() {
+    carrito = [];
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarCarrito();
+}
+
+function mostrarCuadroCuotas() {
+    const cuadroCuotas = document.getElementById('cuadroCuotas');
+    cuadroCuotas.style.display = 'block';
+}
+
+function cerrarCuadroCuotas() {
+    const cuadroCuotas = document.getElementById('cuadroCuotas');
+    cuadroCuotas.style.display = 'none';
+}
+
+function procesarCompra() {
+    const cuotas = document.getElementById('cuotas').value;
+    const total = carrito.reduce((acc, item) => acc + item.precio, 0);
+    const pagoMensual = total / cuotas;
+    alert(`El total es $${total.toFixed(2)} en ${cuotas} cuotas de $${pagoMensual.toFixed(2)}`);
+    vaciarCarrito();
+    cerrarCuadroCuotas();
+}
+
+document.addEventListener('DOMContentLoaded', actualizarCarrito);
+
+window.onclick = function(event) {
+    const cuadroCuotas = document.getElementById('cuadroCuotas');
+    if (event.target == cuadroCuotas) {
+        cuadroCuotas.style.display = 'none';
     }
-
-    historialCompras.push({ producto: producto, precioTotal: precio, cuotas: cuotas, pagoMensual: pagoMensual });
-}
-
-let continuar = true;
-
-while (continuar) {
-    let producto = seleccionarProducto();
-    let precio = preciosProductos[producto];
-    alert(`El precio del modelo ${producto} es de $${precio}.`);
-    calcularCuotas(producto, precio);
-    cantidadPedidos++;
-
-    continuar = confirm("¿Deseas cotizar otro producto?");
-}
-
-if (!continuar) {
-    let revisarHistorial = confirm(`¿Quieres revisar el historial de ${cantidadPedidos} pedidos realizados?`);
-
-    if (revisarHistorial) {
-        let pedidoDeseado = parseInt(prompt(`Han sido hechos ${cantidadPedidos} pedidos. Ingresa el número de pedido que deseas revisar (del 1 al ${cantidadPedidos}):`));
-
-        if (pedidoDeseado >= 1 && pedidoDeseado <= cantidadPedidos) {
-            let pedido = historialCompras[pedidoDeseado - 1];
-            alert(`Detalles del pedido ${pedidoDeseado}:
-            - Producto: ${pedido.producto}
-            - Precio: $${pedido.precioTotal}
-            - Cuotas: ${pedido.cuotas}
-            - Pago Mensual: $${pedido.pagoMensual.toFixed(2)}`);
-            
-            let hacerOtraConsulta = confirm("¿Deseas hacer otra consulta?");
-            
-            while (hacerOtraConsulta) {
-                pedidoDeseado = parseInt(prompt(`Ingresa otro número de pedido que deseas revisar (del 1 al ${cantidadPedidos}):`));
-                
-                if (pedidoDeseado >= 1 && pedidoDeseado <= cantidadPedidos) {
-                    pedido = historialCompras[pedidoDeseado - 1];
-                    alert(`Detalles del pedido ${pedidoDeseado}:
-                    - Producto: ${pedido.producto}
-                    - Precio: $${pedido.precioTotal}
-                    - Cuotas: ${pedido.cuotas}
-                    - Pago Mensual: $${pedido.pagoMensual.toFixed(2)}`);
-                    
-                    hacerOtraConsulta = confirm("¿Deseas hacer otra consulta?");
-                } else {
-                    alert("Número de pedido inválido.");
-                }
-            }
-        } else {
-            alert("Número de pedido inválido.");
-        }
-    }
-}
-
-console.log("Historial de Compras:");
-console.log(historialCompras);
+};
